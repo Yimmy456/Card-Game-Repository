@@ -26,7 +26,7 @@ public class PlayingCanvasScript : MonoBehaviour
         
     }
 
-    public Text MatchCountText()
+    public Text GetMatchCountText()
     {
         return _matchesCountText;
     }
@@ -40,5 +40,4 @@ public class PlayingCanvasScript : MonoBehaviour
     {
         return _mainPanel;
     }
-
 }
