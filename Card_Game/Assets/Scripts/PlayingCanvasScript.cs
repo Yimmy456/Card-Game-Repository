@@ -17,7 +17,10 @@ public class PlayingCanvasScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        if(GameManagerScript.GetInstance() != null)
+        {
+            GameManagerScript.GetInstance().SetPlayingCanvas(this);
+        }
     }
 
     // Update is called once per frame

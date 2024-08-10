@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class GameManagerScript : MonoBehaviour
 {
-    GameManagerScript _instance;
+    static GameManagerScript _instance;
 
     [SerializeField]
     List<CardItemClass> _selectedItems;
@@ -54,7 +54,7 @@ public class GameManagerScript : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    public GameManagerScript GetInstance()
+    public static GameManagerScript GetInstance()
     {
         return _instance;
     }
@@ -97,6 +97,11 @@ public class GameManagerScript : MonoBehaviour
         }
 
         _difficultyLevel = _input;
+    }
+
+    public void SetPlayingCanvas(PlayingCanvasScript _input)
+    {
+        _playingCanvas = _input;
     }
 
     public void AddSelectedItem(CardItemClass _input)
@@ -226,6 +231,29 @@ public class GameManagerScript : MonoBehaviour
             _cardInput .gameObject.transform.rotation = _q;
 
             yield return null;
+        }
+    }
+
+    void StartGame()
+    {
+        int _choices = ItemsManagerScript.GetInstance().GetCardItems().Count;
+
+        int _randIndex = 0;
+
+        CardItemClass _selectedItem;
+
+        while (_cards.Count < 12)
+        {
+            _randIndex = Random.Range(0, _choices);
+
+            _selectedItem = ItemsManagerScript.GetInstance().GetCardItems()[_randIndex];
+
+            if(_selectedItems.Contains(_selectedItem))
+            {
+                continue;
+            }
+
+            _selectedItems.Add(_selectedItem);
         }
     }
 }

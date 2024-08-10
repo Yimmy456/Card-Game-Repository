@@ -13,6 +13,9 @@ public class CardScript : MonoBehaviour
     [SerializeField]
     bool _cardFlipped;
 
+    [SerializeField]
+    SpriteRenderer _renderer;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -38,6 +41,11 @@ public class CardScript : MonoBehaviour
     public bool GetCardFinished()
     {
         return _cardFinished;
+    }
+
+    public Renderer GetRenderer()
+    {
+        return _renderer;
     }
 
     public void SetCardItem(CardItemClass _input)

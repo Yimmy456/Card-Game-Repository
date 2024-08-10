@@ -34,4 +34,9 @@ public class ItemsManagerScript : MonoBehaviour
     {
         return _instance;
     }
+
+    public List<CardItemClass> GetCardItems()
+    {
+        return _cardItems;
+    }
 }
