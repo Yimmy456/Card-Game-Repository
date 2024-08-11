@@ -42,6 +42,10 @@ public class GameManagerScript : MonoBehaviour
     [SerializeField]
     AudioSource _audioSource;
 
+    float _completionPercentage = 0.0f;
+
+    float _progressPercentage = 0.0f;
+
     Vector3 _position = Vector3.zero;
 
     Vector3 _basePosition = Vector3.zero;
@@ -84,6 +88,11 @@ public class GameManagerScript : MonoBehaviour
         }
 
         StartGame();
+    }
+
+    void Update()
+    {
+        UpdateScores();
     }
 
     public static GameManagerScript GetInstance()
@@ -334,6 +343,8 @@ public class GameManagerScript : MonoBehaviour
 
                 _cardProperties.SetCamera(_camera);
 
+                _cardProperties.GetRenderer().gameObject.transform.localScale = ((new Vector3(0.05f, 0.05f, 1.0f)) * _selectedItem.GetItemSpriteIconScale());
+
                 _cardProperties.SetManager(this);
 
                 _cardProperties.SetCardItem(_selectedItem);
@@ -459,5 +470,37 @@ public class GameManagerScript : MonoBehaviour
         _audioSource.clip = _input;
 
         _audioSource.Play();
+    }
+
+    void UpdateScores()
+    {
+        if(_turns <= 0)
+        {
+            _progressPercentage = 0.0f;
+        }
+        else
+        {
+            _progressPercentage = ((float)(_matches)) / ((float)_turns);
+
+            _progressPercentage *= 100.0f;
+        }
+
+        _completionPercentage = ((float)(_matches * 2)) / ((float)_cards.Count);
+
+        _completionPercentage *= 100.0f;
+
+        if (_playingCanvas != null)
+        {
+            if (_playingCanvas.GetCompletionText() != null)
+            {
+                _playingCanvas.GetCompletionText().text = _completionPercentage.ToString("0.00") + "%";
+            }
+
+
+            if (_playingCanvas.GetProgressText() != null)
+            {
+                _playingCanvas.GetProgressText().text = _progressPercentage.ToString("0.00") + "%";
+            }
+        }
     }
 }

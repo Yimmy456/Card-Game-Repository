@@ -12,6 +12,9 @@ public class CardItemClass
     [SerializeField]
     Sprite _itemSprite;
 
+    [SerializeField]
+    float _itemSpriteIconScale = 1.0f;
+
     public string GetItemName()
     {
         return _itemName;
@@ -20,5 +23,10 @@ public class CardItemClass
     public Sprite GetItemSprite()
     {
         return _itemSprite;
+    }
+
+    public float GetItemSpriteIconScale()
+    {
+        return _itemSpriteIconScale;
     }
 }

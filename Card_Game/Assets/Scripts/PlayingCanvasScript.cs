@@ -12,7 +12,10 @@ public class PlayingCanvasScript : MonoBehaviour
     Text _turnsCountText;
 
     [SerializeField]
-    RectTransform _mainPanel;
+    Text _progressText;
+
+    [SerializeField]
+    Text _completionText;
 
     // Start is called before the first frame update
     void Start()
@@ -39,8 +42,13 @@ public class PlayingCanvasScript : MonoBehaviour
         return _turnsCountText;
     }
 
-    public RectTransform GetMainPanel()
+    public Text GetProgressText()
     {
-        return _mainPanel;
+        return _progressText;
+    }
+
+    public Text GetCompletionText()
+    {
+        return _completionText;
     }
 }
