@@ -30,6 +30,18 @@ public class GameManagerScript : MonoBehaviour
     [SerializeField]
     float _distanceScale = 1.0f;
 
+    [SerializeField]
+    AudioClip _flipClip;
+
+    [SerializeField]
+    AudioClip _correctClip;
+
+    [SerializeField]
+    AudioClip _wrongClip;
+
+    [SerializeField]
+    AudioSource _audioSource;
+
     Vector3 _position = Vector3.zero;
 
     Vector3 _basePosition = Vector3.zero;
@@ -143,13 +155,20 @@ public class GameManagerScript : MonoBehaviour
 
     public void EvaluateCards(CardScript _cardInput)
     {
-        if(_card1 == null)
+        if(_cardInput.GetCardFlipped() || _cardInput.GetCardFinished())
+        {
+            return;
+        }
+
+        if (_card1 == null)
         {
             _card1 = _cardInput;
 
             _card1.SetCardFlipped(true);
 
             _rotationAnimationFCoroutine1 = StartCoroutine(RotateCardForward(_card1));
+
+            PlayAudio(_flipClip);
         }
         else if(_card2 == null)
         {
@@ -158,6 +177,8 @@ public class GameManagerScript : MonoBehaviour
             _card2.SetCardFlipped(true);
 
             _rotationAnimationFCoroutine2 = StartCoroutine(RotateCardForward(_card2));
+
+            PlayAudio(_flipClip);
 
             StartCoroutine(MatchCards(_card1, _card2));
 
@@ -198,6 +219,8 @@ public class GameManagerScript : MonoBehaviour
             _matches++;
 
             _playingCanvas.GetMatchCountText().text = _matches.ToString();
+
+            PlayAudio(_correctClip);
         }
         else
         {
@@ -208,6 +231,8 @@ public class GameManagerScript : MonoBehaviour
             _rotationAnimationBCoroutine1 = StartCoroutine(RotateCardBack(_card1Input));
 
             _rotationAnimationBCoroutine2 = StartCoroutine(RotateCardBack(_card2Input));
+
+            PlayAudio(_wrongClip);
         }
     }
 
@@ -422,5 +447,17 @@ public class GameManagerScript : MonoBehaviour
         }
 
         _cards = _newList;
+    }
+
+    void PlayAudio(AudioClip _input)
+    {
+        if(_audioSource == null || _input == null)
+        {
+            return;
+        }
+
+        _audioSource.clip = _input;
+
+        _audioSource.Play();
     }
 }
