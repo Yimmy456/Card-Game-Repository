@@ -16,6 +16,12 @@ public class CardScript : MonoBehaviour
     [SerializeField]
     SpriteRenderer _renderer;
 
+    [SerializeField]
+    Camera _camera;
+
+    //[SerializeField]
+    //Collider _cardCollider;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -25,7 +31,7 @@ public class CardScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        CheckClick();
     }
 
     public CardItemClass GetCardItem()
@@ -48,6 +54,11 @@ public class CardScript : MonoBehaviour
         return _renderer;
     }
 
+    public Camera GetCamera()
+    {
+        return _camera;
+    }
+
     public void SetCardItem(CardItemClass _input)
     {
         _cardItem = _input;
@@ -61,5 +72,49 @@ public class CardScript : MonoBehaviour
     public void SetCardFinished(bool _input)
     {
         _cardFinished = _input;
+    }
+
+    public void SetCamera(Camera _input)
+    {
+        _camera = _input;
+    }
+
+    void CheckClick()
+    {
+        if(_camera == null)
+        {
+            return;
+        }
+
+        if(Input.GetMouseButtonDown(0))
+        {
+            Ray _ray = _camera.ScreenPointToRay(Input.mousePosition);
+
+            RaycastHit _hit;
+
+            if(Physics.Raycast(_ray, out _hit))
+            {
+                Debug.Log("The card is clicked on.");
+            }
+        }
+
+        if(Input.touchCount > 0)
+        {
+            Touch _touch = Input.GetTouch(0);
+
+            if (_touch.phase == TouchPhase.Began)
+            {
+                Vector2 _touchPos = _camera.ScreenToWorldPoint(_touch.position);
+
+                Ray _ray = _camera.ScreenPointToRay(_touchPos);
+
+                RaycastHit _hit;
+
+                if(Physics.Raycast(_ray, out _hit))
+                {
+                    Debug.Log("The card is touched.");
+                }
+            }            
+        }        
     }
 }
