@@ -303,6 +303,8 @@ public class GameManagerScript : MonoBehaviour
 
                 _cardProperties.SetManager(this);
 
+                _cardProperties.SetCardItem(_selectedItem);
+
                 _cards.Add(_cardProperties);
 
                 _instCard.transform.parent = _cardSpaceTr.transform;
@@ -312,6 +314,8 @@ public class GameManagerScript : MonoBehaviour
                 SetNextCardPosition();
             }
         }
+
+        ShuffleCards();
     }
 
     int GetNumberOfCards()
@@ -373,5 +377,42 @@ public class GameManagerScript : MonoBehaviour
                 _position.x -= _basePosition.x;
             }
         }
+    }
+
+    void ShuffleCards()
+    {
+        List<Vector3> _positions = new List<Vector3>();
+
+        List<CardScript> _newList = new List<CardScript>();
+
+        List<int> _indexes = new List<int>();
+
+        for(int _i = 0; _i < _cards.Count; _i++)
+        {
+            _indexes.Add(_i);
+
+            _positions.Add(_cards[_i].gameObject.transform.localPosition);
+        }
+
+        int _j, _selectedIndex;
+
+        int _k = 0;
+
+        while(_indexes.Count > 0)
+        {
+            _j = Random.Range(0, _indexes.Count);
+
+            _selectedIndex = _indexes[_j];
+
+            _newList.Add(_cards[_selectedIndex]);
+
+            _cards[_selectedIndex].gameObject.transform.localPosition = _positions[_k];
+
+            _indexes.RemoveAt(_j);
+
+            _k++;
+        }
+
+        _cards = _newList;
     }
 }
