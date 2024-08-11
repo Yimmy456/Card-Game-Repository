@@ -420,7 +420,7 @@ MonoBehaviour:
   - _itemName: Apple
     _itemSprite: {fileID: 21300000, guid: f33634df4a45b964887801637145a055, type: 3}
   - _itemName: Flower
-    _itemSprite: {fileID: 0}
+    _itemSprite: {fileID: 21300000, guid: 7d27cbbc13ff6ce4084a11dcdc285bcb, type: 3}
   - _itemName: Snowflake
     _itemSprite: {fileID: 21300000, guid: 717b0f2a6a8bde248b513da58a9aafe7, type: 3}
   - _itemName: Sun
@@ -440,17 +440,17 @@ MonoBehaviour:
   - _itemName: Pig
     _itemSprite: {fileID: 21300000, guid: 5c67f9cf99a01144bade8729be740374, type: 3}
   - _itemName: Lion
-    _itemSprite: {fileID: 0}
+    _itemSprite: {fileID: 21300000, guid: 1ede8f0c764d9b94d9b0e7f65e939808, type: 3}
   - _itemName: Rabbit
-    _itemSprite: {fileID: 0}
+    _itemSprite: {fileID: 21300000, guid: 6512e82c9a01d524dad7b8f632b37a14, type: 3}
   - _itemName: TV
-    _itemSprite: {fileID: 0}
+    _itemSprite: {fileID: 21300000, guid: 15a576dadde191e4d958c7b872ef244b, type: 3}
   - _itemName: Moon
-    _itemSprite: {fileID: 0}
+    _itemSprite: {fileID: 21300000, guid: 8f9e8982ebaba8a44b921a2cb15c3c7e, type: 3}
   - _itemName: Crayon
-    _itemSprite: {fileID: 0}
-  - _itemName: Banana
-    _itemSprite: {fileID: 0}
+    _itemSprite: {fileID: 21300000, guid: 2a9f45870df2e5948a71b1a2153e7e31, type: 3}
+  - _itemName: Bananas
+    _itemSprite: {fileID: 21300000, guid: 03d5e8618639dfa46a2e3fbff5dae683, type: 3}
   _difficultySlider: {fileID: 843755787}
 --- !u!4 &367119598
 Transform:
