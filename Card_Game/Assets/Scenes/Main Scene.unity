@@ -397,7 +397,7 @@ MonoBehaviour:
   _selectedItems: []
   _cards: []
   _playingCanvas: {fileID: 0}
-  _rotationAnimationSpeed: 5
+  _rotationAnimationSpeed: 150
   _camera: {fileID: 978440232}
   _cardTemplate: {fileID: 658392155}
   _cardSpaceTr: {fileID: 1040939666}
@@ -494,6 +494,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 239842214}
+  - component: {fileID: 239842215}
   m_Layer: 0
   m_Name: Card
   m_TagString: Untagged
@@ -518,6 +519,19 @@ Transform:
   m_Father: {fileID: 658392154}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &239842215
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 239842213}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 10, y: 10.1, z: 0.25}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &252952348
 GameObject:
   m_ObjectHideFlags: 0
@@ -865,6 +879,7 @@ MonoBehaviour:
   _cardFlipped: 0
   _renderer: {fileID: 230804925}
   _camera: {fileID: 0}
+  _cardCollider: {fileID: 239842215}
 --- !u!1 &660931536
 GameObject:
   m_ObjectHideFlags: 0
@@ -918,6 +933,7 @@ MonoBehaviour:
   _cardFlipped: 0
   _renderer: {fileID: 754467259}
   _camera: {fileID: 0}
+  _cardCollider: {fileID: 0}
 --- !u!1 &708749238
 GameObject:
   m_ObjectHideFlags: 0
@@ -1621,6 +1637,7 @@ MonoBehaviour:
   _cardFlipped: 0
   _renderer: {fileID: 2122163328}
   _camera: {fileID: 0}
+  _cardCollider: {fileID: 0}
 --- !u!1 &1348168103
 GameObject:
   m_ObjectHideFlags: 0

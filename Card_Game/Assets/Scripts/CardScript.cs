@@ -19,8 +19,10 @@ public class CardScript : MonoBehaviour
     [SerializeField]
     Camera _camera;
 
-    //[SerializeField]
-    //Collider _cardCollider;
+    GameManagerScript _manager;
+
+    [SerializeField]
+    Collider _cardCollider;
 
     // Start is called before the first frame update
     void Start()
@@ -59,6 +61,11 @@ public class CardScript : MonoBehaviour
         return _camera;
     }
 
+    public GameManagerScript GetManager()
+    {
+        return _manager;
+    }
+
     public void SetCardItem(CardItemClass _input)
     {
         _cardItem = _input;
@@ -79,9 +86,14 @@ public class CardScript : MonoBehaviour
         _camera = _input;
     }
 
+    public void SetManager(GameManagerScript _input)
+    {
+        _manager = _input;
+    }
+
     void CheckClick()
     {
-        if(_camera == null)
+        if(_camera == null || _manager == null || _cardFlipped || _cardCollider == null)
         {
             return;
         }
@@ -94,7 +106,10 @@ public class CardScript : MonoBehaviour
 
             if(Physics.Raycast(_ray, out _hit))
             {
-                Debug.Log("The card is clicked on.");
+                if (_hit.collider == _cardCollider)
+                {
+                    _manager.EvaluateCards(this);
+                }
             }
         }
 

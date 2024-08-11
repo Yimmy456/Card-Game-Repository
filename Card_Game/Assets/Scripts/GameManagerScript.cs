@@ -27,6 +27,10 @@ public class GameManagerScript : MonoBehaviour
     [SerializeField]
     Transform _cardSpaceTr;
 
+    Vector3 _position = Vector3.zero;
+
+    Vector3 _basePosition = Vector3.zero;
+
     CardScript _card1;
 
     CardScript _card2;
@@ -99,7 +103,7 @@ public class GameManagerScript : MonoBehaviour
 
     public void SetDifficultyLevel(int _input)
     {
-        if(!(_input >= 1 && _input <= 5))
+        if(!(_input >= 1 && _input <= 4))
         {
             return;
         }
@@ -173,7 +177,7 @@ public class GameManagerScript : MonoBehaviour
             StopCoroutine(_rotationAnimationFCoroutine2);
         }
 
-        if(_card1Input.GetCardItem() == _card2Input.GetCardItem())
+        if(_card1Input.GetCardItem().GetItemName() == _card2Input.GetCardItem().GetItemName())
         {
             _card1Input.SetCardFinished(true);
 
@@ -251,6 +255,8 @@ public class GameManagerScript : MonoBehaviour
 
     void StartGame()
     {
+        //Certain variables MUST be assigned before proceeding in creating the game.
+
         if(_cardTemplate == null || _camera == null || _cardSpaceTr == null)
         {
             return;
@@ -266,11 +272,17 @@ public class GameManagerScript : MonoBehaviour
 
         GameObject _instCard;
 
-        while (_cards.Count < 12)
+        int _numberOfCards = GetNumberOfCards();
+
+        while (_cards.Count < _numberOfCards)
         {
             _randIndex = Random.Range(0, _choices);
 
+            //Selecting any random tiem from the "Items" list from the "Items Manager" script.
+
             _selectedItem = ItemsManagerScript.GetInstance().GetCardItems()[_randIndex];
+
+            //The current iteration will be skipped if the selected item is already in the "Selected Items" list. This is to ensure that each distinct item is selected once.
 
             if(_selectedItems.Contains(_selectedItem) || _selectedItem.GetItemSprite() == null)
             {
@@ -289,7 +301,76 @@ public class GameManagerScript : MonoBehaviour
 
                 _cardProperties.SetCamera(_camera);
 
+                _cardProperties.SetManager(this);
+
                 _cards.Add(_cardProperties);
+
+                _instCard.transform.parent = _cardSpaceTr.transform;
+
+                _instCard.transform.localPosition = _position;
+
+                SetNextCardPosition();
+            }
+        }
+    }
+
+    int GetNumberOfCards()
+    {
+        switch (_difficultyLevel)
+        {
+            case 2:
+                _position = new Vector3(-7.5f, 5.0f, 0.0f);
+
+                _basePosition = _position;
+
+                return 12;
+            case 3:
+                _position = new Vector3(-7.5f, 15.0f, 0.0f);
+
+                _basePosition = _position;
+
+                return 16;
+            case 4:
+                _position = new Vector3(-10.0f, 15.0f, 0.0f);
+
+                _basePosition = _position;
+
+                return 20;
+            default:
+                _position = new Vector3(-5.0f, 5.0f, 0.0f);
+
+                _basePosition = _position;
+
+                return 8;
+        }
+    }
+
+    void SetNextCardPosition()
+    {
+        if(_difficultyLevel == 4)
+        {
+            if((_cards.Count % 5) == 0)
+            {
+                _position.x = _basePosition.x;
+
+                _position.y -= _basePosition.y;
+            }
+            else
+            {
+                _position.x -= _basePosition.x;
+            }
+        }
+        else
+        {
+            if((_cards.Count % 4) == 0)
+            {
+                _position.x = _basePosition.x;
+
+                _position.y -= _basePosition.y;
+            }
+            else
+            {
+                _position.x -= _basePosition.x;
             }
         }
     }
