@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ItemsManagerScript : MonoBehaviour
 {
@@ -8,6 +9,11 @@ public class ItemsManagerScript : MonoBehaviour
 
     [SerializeField]
     List<CardItemClass> _cardItems;
+
+    [SerializeField]
+    Slider _difficultySlider;
+
+    int _difficulty = 1;
 
     // Start is called before the first frame update
     void Start()
@@ -27,7 +33,10 @@ public class ItemsManagerScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if(_difficultySlider != null)
+        {
+            _difficulty = (int)_difficultySlider.value;
+        }
     }
 
     public static ItemsManagerScript GetInstance()
@@ -38,5 +47,20 @@ public class ItemsManagerScript : MonoBehaviour
     public List<CardItemClass> GetCardItems()
     {
         return _cardItems;
+    }
+
+    public Slider GetDifficultySlider()
+    {
+        return _difficultySlider;
+    }
+
+    public int GetDifficulty()
+    {
+        return _difficulty;
+    }
+
+    public void SetDifficultySlider(Slider _input)
+    {
+        _difficultySlider = _input;
     }
 }

@@ -27,6 +27,9 @@ public class GameManagerScript : MonoBehaviour
     [SerializeField]
     Transform _cardSpaceTr;
 
+    [SerializeField]
+    float _distanceScale = 1.0f;
+
     Vector3 _position = Vector3.zero;
 
     Vector3 _basePosition = Vector3.zero;
@@ -62,6 +65,11 @@ public class GameManagerScript : MonoBehaviour
         }
 
         //DontDestroyOnLoad(gameObject);
+
+        if (ItemsManagerScript.GetInstance() != null)
+        {
+            _difficultyLevel = ItemsManagerScript.GetInstance().GetDifficulty();
+        }
 
         StartGame();
     }
@@ -323,25 +331,25 @@ public class GameManagerScript : MonoBehaviour
         switch (_difficultyLevel)
         {
             case 2:
-                _position = new Vector3(-7.5f, 5.0f, 0.0f);
+                _position = new Vector3((-7.5f * _distanceScale), (5.0f * _distanceScale), 0.0f);
 
                 _basePosition = _position;
 
                 return 12;
             case 3:
-                _position = new Vector3(-7.5f, 15.0f, 0.0f);
+                _position = new Vector3((-7.5f * _distanceScale), (7.5f * _distanceScale), 0.0f);
 
                 _basePosition = _position;
 
                 return 16;
             case 4:
-                _position = new Vector3(-10.0f, 15.0f, 0.0f);
+                _position = new Vector3((-10.0f * _distanceScale), (7.5f * _distanceScale), 0.0f);
 
                 _basePosition = _position;
 
                 return 20;
             default:
-                _position = new Vector3(-5.0f, 5.0f, 0.0f);
+                _position = new Vector3((-7.5f * _distanceScale), (2.5f * _distanceScale), 0.0f);
 
                 _basePosition = _position;
 
@@ -357,11 +365,11 @@ public class GameManagerScript : MonoBehaviour
             {
                 _position.x = _basePosition.x;
 
-                _position.y -= _basePosition.y;
+                _position.y -= (5.0f * _distanceScale);
             }
             else
             {
-                _position.x -= _basePosition.x;
+                _position.x += (5.0f * _distanceScale);
             }
         }
         else
@@ -370,11 +378,11 @@ public class GameManagerScript : MonoBehaviour
             {
                 _position.x = _basePosition.x;
 
-                _position.y -= _basePosition.y;
+                _position.y -= (5.0f * _distanceScale);
             }
             else
             {
-                _position.x -= _basePosition.x;
+                _position.x += (5.0f * _distanceScale);
             }
         }
     }
