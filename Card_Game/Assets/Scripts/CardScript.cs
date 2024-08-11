@@ -127,7 +127,10 @@ public class CardScript : MonoBehaviour
 
                 if(Physics.Raycast(_ray, out _hit))
                 {
-                    Debug.Log("The card is touched.");
+                    if(_hit.collider == _cardCollider)
+                    {
+                        _manager.EvaluateCards(this);
+                    }
                 }
             }            
         }        
