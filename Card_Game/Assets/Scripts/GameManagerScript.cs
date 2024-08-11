@@ -21,6 +21,12 @@ public class GameManagerScript : MonoBehaviour
     [SerializeField]
     Camera _camera;
 
+    [SerializeField]
+    CardScript _cardTemplate;
+
+    [SerializeField]
+    Transform _cardSpaceTr;
+
     CardScript _card1;
 
     CardScript _card2;
@@ -51,7 +57,9 @@ public class GameManagerScript : MonoBehaviour
             Destroy(gameObject);
         }
 
-        DontDestroyOnLoad(gameObject);
+        //DontDestroyOnLoad(gameObject);
+
+        StartGame();
     }
 
     public static GameManagerScript GetInstance()
@@ -111,6 +119,13 @@ public class GameManagerScript : MonoBehaviour
 
     public void ClearGame()
     {
+        foreach(CardScript _card in _cards)
+        {
+            Destroy(_card.gameObject);
+        }
+
+        _cards.Clear();
+
         _selectedItems.Clear();
     }
 
@@ -236,11 +251,20 @@ public class GameManagerScript : MonoBehaviour
 
     void StartGame()
     {
+        if(_cardTemplate == null || _camera == null || _cardSpaceTr == null)
+        {
+            return;
+        }
+
         int _choices = ItemsManagerScript.GetInstance().GetCardItems().Count;
 
         int _randIndex = 0;
 
         CardItemClass _selectedItem;
+
+        CardScript _cardProperties;
+
+        GameObject _instCard;
 
         while (_cards.Count < 12)
         {
@@ -248,12 +272,25 @@ public class GameManagerScript : MonoBehaviour
 
             _selectedItem = ItemsManagerScript.GetInstance().GetCardItems()[_randIndex];
 
-            if(_selectedItems.Contains(_selectedItem))
+            if(_selectedItems.Contains(_selectedItem) || _selectedItem.GetItemSprite() == null)
             {
                 continue;
             }
 
             _selectedItems.Add(_selectedItem);
+
+            for (int _i = 0; _i < 2; _i++)
+            {
+                _instCard = Instantiate(_cardTemplate.gameObject);
+
+                _cardProperties = _instCard.GetComponent<CardScript>();
+
+                _cardProperties.GetRenderer().sprite = _selectedItem.GetItemSprite();
+
+                _cardProperties.SetCamera(_camera);
+
+                _cards.Add(_cardProperties);
+            }
         }
     }
 }

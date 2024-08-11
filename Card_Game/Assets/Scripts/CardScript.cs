@@ -49,7 +49,7 @@ public class CardScript : MonoBehaviour
         return _cardFinished;
     }
 
-    public Renderer GetRenderer()
+    public SpriteRenderer GetRenderer()
     {
         return _renderer;
     }
