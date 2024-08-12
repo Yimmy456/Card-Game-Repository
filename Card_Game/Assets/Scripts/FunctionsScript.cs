@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class FunctionsScript : MonoBehaviour
 {
@@ -54,5 +55,19 @@ public class FunctionsScript : MonoBehaviour
         DataPersistenceManagerScript.GetInstance().GetGameData()._cardItems.Clear();
 
         DataPersistenceManagerScript.GetInstance().GetGameData()._cardPositions.Clear();
+    }
+
+    public void ChangeCardSize(Dropdown _input)
+    {
+        if(ItemsManagerScript.GetInstance() == null || _input == null)
+        {
+            return;
+        }
+
+        int _number = _input.value;
+
+        CardSizeEnum _val = (CardSizeEnum)_number;
+
+        ItemsManagerScript.GetInstance().SetCardSize(_val);
     }
 }

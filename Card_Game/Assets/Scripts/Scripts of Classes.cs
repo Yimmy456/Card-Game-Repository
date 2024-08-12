@@ -1,4 +1,3 @@
-using Palmmedia.ReportGenerator.Core.Reporting.Builders.Rendering;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -42,4 +41,11 @@ public class CardItemClass
     {
         _itemID = _input;
     }
+}
+
+public enum CardSizeEnum
+{
+    S_2x2,
+    S_2x3,
+    S_5x6,
 }

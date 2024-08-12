@@ -11,6 +11,9 @@ public class MenuCanvasScript : MonoBehaviour
     [SerializeField]
     Button _resumeButton;
 
+    [SerializeField]
+    Dropdown _cardSizeDropdown;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -39,5 +42,10 @@ public class MenuCanvasScript : MonoBehaviour
     public Button GetResumeButton()
     {
         return _resumeButton;
+    }
+
+    public Dropdown GetCardSizeDropdown()
+    {
+        return _cardSizeDropdown;
     }
 }

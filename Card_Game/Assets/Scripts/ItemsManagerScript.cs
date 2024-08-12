@@ -13,6 +13,9 @@ public class ItemsManagerScript : MonoBehaviour
     [SerializeField]
     Slider _difficultySlider;
 
+    [SerializeField]
+    CardSizeEnum _cardSize;
+
     [ContextMenu("Give Item IDs")]
     void GiveIDs()
     {
@@ -77,8 +80,18 @@ public class ItemsManagerScript : MonoBehaviour
         return _difficulty;
     }
 
+    public CardSizeEnum GetCardSize()
+    {
+        return _cardSize;
+    }
+
     public void SetDifficultySlider(Slider _input)
     {
         _difficultySlider = _input;
+    }
+
+    public void SetCardSize(CardSizeEnum _input)
+    {
+        _cardSize = _input;
     }
 }

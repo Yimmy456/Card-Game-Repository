@@ -960,6 +960,8 @@ MonoBehaviour:
   _camera: {fileID: 0}
   _assignedPosition: {x: 0, y: 0, z: 0}
   _cardCollider: {fileID: 239842215}
+  _cardBack: {fileID: 1419745255}
+  _cardFront: {fileID: 1107125512}
 --- !u!1 &796756770
 GameObject:
   m_ObjectHideFlags: 0

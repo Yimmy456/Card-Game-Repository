@@ -51,6 +51,8 @@ public class GameManagerScript : MonoBehaviour
 
     int _difficultyLevel = 1;
 
+    float _posZ = 0.0f;
+
     Coroutine _rotationAnimationFCoroutine1;
 
     Coroutine _rotationAnimationBCoroutine1;
@@ -300,6 +302,10 @@ public class GameManagerScript : MonoBehaviour
 
         string _newCardID;
 
+        Vector3 _layout = GetLayout();
+
+        _position.z = _posZ;
+
         while (_gameSession.GetCards().Count < _numberOfCards)
         {
             _randIndex = Random.Range(0, _choices);
@@ -336,6 +342,10 @@ public class GameManagerScript : MonoBehaviour
                 _cardProperties.SetCardItem(_selectedItem);
 
                 _cardProperties.SetCardID(_newCardID);
+
+                _cardProperties.GetCardBackTransform().localScale = _layout;
+
+                _cardProperties.GetCardFrontTransform().localScale = _layout;
 
                 _gameSession.AddCard(_cardProperties);
 
@@ -527,6 +537,8 @@ public class GameManagerScript : MonoBehaviour
 
         CardItemClass _currentItem = new CardItemClass();
 
+        Vector3 _layout = GetLayout();
+
         for(int _i = 0; _i < _count; _i++)
         {
             _cardInstGO = Instantiate(_cardTemplate.gameObject);
@@ -573,9 +585,15 @@ public class GameManagerScript : MonoBehaviour
 
             _cardInst.SetManager(this);
 
+            _cardInst.GetCardBackTransform().localScale = _layout;
+
+            _cardInst.GetCardFrontTransform().localScale = _layout;
+
             _cards.Add(_cardInst);
 
             _cardInstGO.transform.parent = _cardSpaceTr;
+
+            _assignedP.z = _posZ;
 
             _cardInstGO.transform.localPosition = _assignedP;
 
@@ -616,5 +634,38 @@ public class GameManagerScript : MonoBehaviour
         _playingCanvas.GetProgressText().text = _progP.ToString("0.00") + "%";
 
         _playingCanvas.GetCompletionText().text = _compP.ToString("0.00") + "%";
+    }
+
+    Vector3 GetLayout()
+    {
+        if(ItemsManagerScript.GetInstance() == null)
+        {
+            _posZ = 0.0f;
+
+            return Vector3.one;
+        }
+
+        CardSizeEnum _val = ItemsManagerScript.GetInstance().GetCardSize();
+
+        switch (_val)
+        {
+            case CardSizeEnum.S_2x3:
+
+                _posZ = 2.0f;
+
+                return (new Vector3(1.0f, 1.0f, 1.5f));
+
+            case CardSizeEnum.S_5x6:
+
+                _posZ = 5.0f;
+
+                return (new Vector3(2.5f, 1.0f, 3.0f) * 0.75f);
+
+            default:
+
+                _posZ = 0.0f;
+
+                return (new Vector3(1.0f, 1.0f, 1.0f));
+        }
     }
 }

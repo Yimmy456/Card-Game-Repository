@@ -30,6 +30,12 @@ public class CardScript : MonoBehaviour
     [SerializeField]
     Collider _cardCollider;
 
+    [SerializeField]
+    Transform _cardBack;
+
+    [SerializeField]
+    Transform _cardFront;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -80,6 +86,16 @@ public class CardScript : MonoBehaviour
     public Vector3 GetAssignedPosition()
     {
         return _assignedPosition;
+    }
+
+    public Transform GetCardBackTransform()
+    {
+        return _cardBack;
+    }
+
+    public Transform GetCardFrontTransform()
+    {
+        return _cardFront;
     }
 
     public void SetCardID(string _input)
