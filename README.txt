@@ -1,7 +1,6 @@
 *IMPORTANT: When you start the game in the editor, you need to start from the "Prestart Scene" scene file.
 
-
-
+*Update: There is a dropdown menu in the "Menu" scene to selected the user's desired card layout.
 
 *Links of Sprites:
 
