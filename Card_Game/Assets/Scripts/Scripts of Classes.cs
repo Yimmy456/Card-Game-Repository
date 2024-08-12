@@ -7,6 +7,9 @@ using UnityEngine;
 public class CardItemClass
 {
     [SerializeField]
+    string _itemID;
+
+    [SerializeField]
     string _itemName;
 
     [SerializeField]
@@ -14,6 +17,11 @@ public class CardItemClass
 
     [SerializeField]
     float _itemSpriteIconScale = 1.0f;
+
+    public string GetItemID()
+    {
+        return _itemID;
+    }
 
     public string GetItemName()
     {
@@ -28,5 +36,10 @@ public class CardItemClass
     public float GetItemSpriteIconScale()
     {
         return _itemSpriteIconScale;
+    }
+
+    public void SetItemID(string _input)
+    {
+        _itemID = _input;
     }
 }

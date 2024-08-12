@@ -5,6 +5,9 @@ using UnityEngine;
 public class CardScript : MonoBehaviour
 {
     [SerializeField]
+    string _cardID;
+
+    [SerializeField]
     CardItemClass _cardItem;
 
     [SerializeField]
@@ -18,6 +21,9 @@ public class CardScript : MonoBehaviour
 
     [SerializeField]
     Camera _camera;
+
+    [SerializeField]
+    Vector3 _assignedPosition;
 
     GameManagerScript _manager;
 
@@ -34,6 +40,11 @@ public class CardScript : MonoBehaviour
     void Update()
     {
         CheckClick();
+    }
+
+    public string GetCardID()
+    {
+        return _cardID;
     }
 
     public CardItemClass GetCardItem()
@@ -66,6 +77,16 @@ public class CardScript : MonoBehaviour
         return _manager;
     }
 
+    public Vector3 GetAssignedPosition()
+    {
+        return _assignedPosition;
+    }
+
+    public void SetCardID(string _input)
+    {
+        _cardID = _input;
+    }
+
     public void SetCardItem(CardItemClass _input)
     {
         _cardItem = _input;
@@ -89,6 +110,11 @@ public class CardScript : MonoBehaviour
     public void SetManager(GameManagerScript _input)
     {
         _manager = _input;
+    }
+
+    public void SetAssignedPosition(Vector3 _input)
+    {
+        _assignedPosition = _input;
     }
 
     void CheckClick()

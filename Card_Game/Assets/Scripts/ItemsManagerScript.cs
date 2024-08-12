@@ -13,6 +13,24 @@ public class ItemsManagerScript : MonoBehaviour
     [SerializeField]
     Slider _difficultySlider;
 
+    [ContextMenu("Give Item IDs")]
+    void GiveIDs()
+    {
+        string _newID;
+
+        foreach(CardItemClass _item in _cardItems)
+        {
+            //if(_item.GetItemID() != "")
+            //{
+              //  continue;
+            //}
+
+            _newID = System.Guid.NewGuid().ToString();
+
+            _item.SetItemID(_newID);
+        }
+    }
+
     int _difficulty = 1;
 
     // Start is called before the first frame update

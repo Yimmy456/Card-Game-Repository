@@ -19,10 +19,11 @@ public class DataPersistenceManagerScript : MonoBehaviour
 
     FileDataHandlerScript _fileHandler;
 
-
     static DataPersistenceManagerScript _instance;
 
     bool _fileFound = true;
+
+    bool _loadSession = true;
 
     private void Awake()
     {
@@ -41,8 +42,7 @@ public class DataPersistenceManagerScript : MonoBehaviour
     private void Start()
     {
         _fileHandler = new FileDataHandlerScript(Application.persistentDataPath, _fileName, _useEncryption);
-        //_dataPersistentObjects = FindAllDataPersistenceObject();
-        //_dataPersistentClasses = new List<IDataPersistenceScript>();
+
         _dataPersistentObjects = new List<IDataPersistenceScript>();
 
         Debug.Log("File path is: " + _fileHandler + ".");
@@ -64,6 +64,16 @@ public class DataPersistenceManagerScript : MonoBehaviour
         _data = new GameDataScript();
     }
 
+    public bool GetLoadSession()
+    {
+        return _loadSession;
+    }
+
+    public void SetLoadGame(bool _input)
+    {
+        _loadSession = _input;
+    }
+
     public void LoadGame()
     {
         _data = _fileHandler.LoadData();
@@ -72,8 +82,6 @@ public class DataPersistenceManagerScript : MonoBehaviour
         {
             NewGame();
         }
-
-
 
         foreach (IDataPersistenceScript _object in _dataPersistentObjects)
         {
@@ -86,7 +94,6 @@ public class DataPersistenceManagerScript : MonoBehaviour
 
     public void SaveGame()
     {
-
         foreach (IDataPersistenceScript _object in _dataPersistentObjects)
         {
             if (_object != null)
@@ -137,11 +144,27 @@ public class DataPersistenceManagerScript : MonoBehaviour
     {
         string _path = Application.persistentDataPath;
 
-        if (Application.platform == RuntimePlatform.Android)
-        {
-            _path = "/Android/data/com.Manar_Ajhars_Games.Asthma_App/files/";
-        }
+        //if (Application.platform == RuntimePlatform.Android)
+        //{
+        //    _path = "/Android/data/com.Manar_Ajhars_Games.Asthma_App/files/";
+        //}
 
         return _path;
+    }
+
+    public void ClearGameData()
+    {
+        if(_data == null)
+        {
+            return;
+        }
+
+        _data._validSession = false;
+
+        _data._flippingStati.Clear();
+
+        _data._cardItems.Clear();
+
+        _data._cardPositions.Clear();
     }
 }

@@ -1,17 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class GameManagerScript : MonoBehaviour
 {
     static GameManagerScript _instance;
-
-    [SerializeField]
-    List<CardItemClass> _selectedItems;
-
-    [SerializeField]
-    List<CardScript> _cards;
 
     [SerializeField]
     PlayingCanvasScript _playingCanvas;
@@ -43,9 +38,8 @@ public class GameManagerScript : MonoBehaviour
     [SerializeField]
     AudioSource _audioSource;
 
-    float _completionPercentage = 0.0f;
-
-    float _progressPercentage = 0.0f;
+    [SerializeField]
+    GameSessionScript _gameSession;
 
     Vector3 _position = Vector3.zero;
 
@@ -56,10 +50,6 @@ public class GameManagerScript : MonoBehaviour
     CardScript _card2;
 
     int _difficultyLevel = 1;
-
-    int _turns = 0;
-
-    int _matches = 0;
 
     Coroutine _rotationAnimationFCoroutine1;
 
@@ -88,16 +78,30 @@ public class GameManagerScript : MonoBehaviour
             _difficultyLevel = ItemsManagerScript.GetInstance().GetDifficulty();
         }
 
-        StartGame();
+        bool _load = DataPersistenceManagerScript.GetInstance().GetLoadSession();
+
+        if (_load)
+        {
+            LoadGame();
+        }
+        else
+        {
+            StartNewGame();
+        }
     }
 
     void Update()
     {
-        UpdateScores();
-
-        if(_completionPercentage == 100.0f)
+        if (_gameSession != null)
         {
-            SceneManager.LoadScene("Game Over Scene");
+            UpdateScores();
+
+            if(_gameSession.GetCompletionPercentage() == 100.0f)
+            {
+                DataPersistenceManagerScript.GetInstance().ClearGameData();
+
+                SceneManager.LoadScene("Game Over Scene");
+            }
         }
     }
 
@@ -106,34 +110,19 @@ public class GameManagerScript : MonoBehaviour
         return _instance;
     }
 
-    public List<CardItemClass> GetSelectedItems()
-    {
-        return _selectedItems;
-    }
-
-    public List<CardScript> GetCards()
-    {
-        return _cards;
-    }
-
     public int GetDifficultyLevel()
     {
         return _difficultyLevel;
     }
 
-    public int GetTurns()
-    {
-        return _turns;
-    }
-
-    public int GetMatches()
-    {
-        return _matches;
-    }
-
     public PlayingCanvasScript GetPlayingCanvas()
     {
         return _playingCanvas;
+    }
+
+    public GameSessionScript GetGameSession()
+    {
+        return _gameSession;
     }
 
     public void SetDifficultyLevel(int _input)
@@ -149,23 +138,6 @@ public class GameManagerScript : MonoBehaviour
     public void SetPlayingCanvas(PlayingCanvasScript _input)
     {
         _playingCanvas = _input;
-    }
-
-    public void AddSelectedItem(CardItemClass _input)
-    {
-        _selectedItems.Add(_input);
-    }
-
-    public void ClearGame()
-    {
-        foreach(CardScript _card in _cards)
-        {
-            Destroy(_card.gameObject);
-        }
-
-        _cards.Clear();
-
-        _selectedItems.Clear();
     }
 
     public void EvaluateCards(CardScript _cardInput)
@@ -197,9 +169,9 @@ public class GameManagerScript : MonoBehaviour
 
             StartCoroutine(MatchCards(_card1, _card2));
 
-            _turns++;
+            _gameSession.IncTurns();
 
-            _playingCanvas.GetTurnsCountText().text = _turns.ToString();
+            _playingCanvas.GetTurnsCountText().text = _gameSession.GetTurns().ToString();
 
             _card1 = null;
 
@@ -231,9 +203,9 @@ public class GameManagerScript : MonoBehaviour
 
             _card2Input.gameObject.SetActive(false);
 
-            _matches++;
+            _gameSession.IncMatches();
 
-            _playingCanvas.GetMatchCountText().text = _matches.ToString();
+            _playingCanvas.GetMatchCountText().text = _gameSession.GetMatches().ToString();
 
             PlayAudio(_correctClip);
         }
@@ -301,7 +273,7 @@ public class GameManagerScript : MonoBehaviour
         }
     }
 
-    void StartGame()
+    void StartNewGame()
     {
         //Certain variables MUST be assigned before proceeding in creating the game.
 
@@ -322,7 +294,13 @@ public class GameManagerScript : MonoBehaviour
 
         int _numberOfCards = GetNumberOfCards();
 
-        while (_cards.Count < _numberOfCards)
+        _gameSession = new GameSessionScript();
+
+        _gameSession.SetGameManager(this);
+
+        string _newCardID;
+
+        while (_gameSession.GetCards().Count < _numberOfCards)
         {
             _randIndex = Random.Range(0, _choices);
 
@@ -332,16 +310,18 @@ public class GameManagerScript : MonoBehaviour
 
             //The current iteration will be skipped if the selected item is already in the "Selected Items" list. This is to ensure that each distinct item is selected once.
 
-            if(_selectedItems.Contains(_selectedItem) || _selectedItem.GetItemSprite() == null)
+            if(_gameSession.GetSelectedItems().Contains(_selectedItem) || _selectedItem.GetItemSprite() == null)
             {
                 continue;
             }
 
-            _selectedItems.Add(_selectedItem);
+            _gameSession.GetSelectedItems().Add(_selectedItem);
 
             for (int _i = 0; _i < 2; _i++)
             {
                 _instCard = Instantiate(_cardTemplate.gameObject);
+
+                _newCardID = System.Guid.NewGuid().ToString();
 
                 _cardProperties = _instCard.GetComponent<CardScript>();
 
@@ -355,7 +335,9 @@ public class GameManagerScript : MonoBehaviour
 
                 _cardProperties.SetCardItem(_selectedItem);
 
-                _cards.Add(_cardProperties);
+                _cardProperties.SetCardID(_newCardID);
+
+                _gameSession.AddCard(_cardProperties);
 
                 _instCard.transform.parent = _cardSpaceTr.transform;
 
@@ -363,8 +345,7 @@ public class GameManagerScript : MonoBehaviour
 
                 SetNextCardPosition();
             }
-        }
-
+        }        
         ShuffleCards();
     }
 
@@ -401,9 +382,14 @@ public class GameManagerScript : MonoBehaviour
 
     void SetNextCardPosition()
     {
+        if(_gameSession == null)
+        {
+            return;
+        }
+
         if(_difficultyLevel == 4)
         {
-            if((_cards.Count % 5) == 0)
+            if((_gameSession.GetCards().Count % 5) == 0)
             {
                 _position.x = _basePosition.x;
 
@@ -416,7 +402,7 @@ public class GameManagerScript : MonoBehaviour
         }
         else
         {
-            if((_cards.Count % 4) == 0)
+            if((_gameSession.GetCards().Count % 4) == 0)
             {
                 _position.x = _basePosition.x;
 
@@ -437,11 +423,11 @@ public class GameManagerScript : MonoBehaviour
 
         List<int> _indexes = new List<int>();
 
-        for(int _i = 0; _i < _cards.Count; _i++)
+        for(int _i = 0; _i < _gameSession.GetCards().Count; _i++)
         {
             _indexes.Add(_i);
 
-            _positions.Add(_cards[_i].gameObject.transform.localPosition);
+            _positions.Add(_gameSession.GetCards()[_i].gameObject.transform.localPosition);
         }
 
         int _j, _selectedIndex;
@@ -454,16 +440,25 @@ public class GameManagerScript : MonoBehaviour
 
             _selectedIndex = _indexes[_j];
 
-            _newList.Add(_cards[_selectedIndex]);
+            _newList.Add(_gameSession.GetCards()[_selectedIndex]);
 
-            _cards[_selectedIndex].gameObject.transform.localPosition = _positions[_k];
+            _gameSession.GetCards()[_selectedIndex].gameObject.transform.localPosition = _positions[_k];
+
+            _gameSession.GetCards()[_selectedIndex].SetAssignedPosition(_positions[_k]);
 
             _indexes.RemoveAt(_j);
 
             _k++;
         }
 
-        _cards = _newList;
+        for(int _i = (_newList.Count - 1); _i >= 0; _i--)
+        {
+            _newList[_i].gameObject.name = "Card No. " + (_i + 1);
+
+            _newList[_i].gameObject.transform.SetSiblingIndex(0);
+        }
+
+        _gameSession.SetCards(_newList);
     }
 
     void PlayAudio(AudioClip _input)
@@ -480,33 +475,146 @@ public class GameManagerScript : MonoBehaviour
 
     void UpdateScores()
     {
-        if(_turns <= 0)
+        if(_gameSession == null)
         {
-            _progressPercentage = 0.0f;
-        }
-        else
-        {
-            _progressPercentage = ((float)(_matches)) / ((float)_turns);
-
-            _progressPercentage *= 100.0f;
+            return;
         }
 
-        _completionPercentage = ((float)(_matches * 2)) / ((float)_cards.Count);
-
-        _completionPercentage *= 100.0f;
+        _gameSession.UpdateScore();
 
         if (_playingCanvas != null)
         {
             if (_playingCanvas.GetCompletionText() != null)
             {
-                _playingCanvas.GetCompletionText().text = _completionPercentage.ToString("0.00") + "%";
+                _playingCanvas.GetCompletionText().text = _gameSession.GetCompletionPercentage().ToString("0.00") + "%";
             }
 
 
             if (_playingCanvas.GetProgressText() != null)
             {
-                _playingCanvas.GetProgressText().text = _progressPercentage.ToString("0.00") + "%";
+                _playingCanvas.GetProgressText().text = _gameSession.GetProgressPercentage().ToString("0.00") + "%";
             }
         }
+    }
+
+    void LoadGame()
+    {
+        int _count = DataPersistenceManagerScript.GetInstance().GetGameData()._flippingStati.Count;
+
+        CardScript _cardInst;
+
+        GameObject _cardInstGO;
+
+        string _key;
+
+        bool _flipS;
+
+        string _itemKey;
+
+        Vector3 _assignedP = Vector3.zero;
+
+        bool _itemFound;
+
+        int _turnsV, _matchesV;
+
+        float _progP, _compP;
+
+        List<CardScript> _cards = new List<CardScript>();
+
+        _gameSession = new GameSessionScript();
+
+        _gameSession.SetGameManager(this);
+
+        CardItemClass _currentItem = new CardItemClass();
+
+        for(int _i = 0; _i < _count; _i++)
+        {
+            _cardInstGO = Instantiate(_cardTemplate.gameObject);
+
+            _itemFound = false;
+
+            _cardInst = _cardInstGO.GetComponent<CardScript>();
+
+            _key = DataPersistenceManagerScript.GetInstance().GetGameData()._flippingStati.ElementAt(_i).Key;
+
+            _flipS = DataPersistenceManagerScript.GetInstance().GetGameData()._flippingStati.ElementAt(_i).Value;
+
+            _itemKey = DataPersistenceManagerScript.GetInstance().GetGameData()._cardItems.ElementAt(_i).Value;
+
+            _assignedP = DataPersistenceManagerScript.GetInstance().GetGameData()._cardPositions.ElementAt(_i).Value;
+
+            _cardInst.SetCardID(_key);
+
+            _cardInst.SetCardFinished(_flipS);
+
+            _cardInst.SetCardFlipped(_flipS);
+
+            for(int _j = 0; _j < ItemsManagerScript.GetInstance().GetCardItems().Count && !_itemFound; _j++)
+            {
+                if (ItemsManagerScript.GetInstance().GetCardItems()[_j].GetItemID() == _itemKey)
+                {
+                    _currentItem = ItemsManagerScript.GetInstance().GetCardItems()[_j];
+
+                    _cardInst.SetCardItem(_currentItem);
+
+                    _itemFound = true;
+                }
+            }
+
+            _cardInst.SetAssignedPosition(_assignedP);
+
+            _cardInst.SetCamera(_camera);
+
+            _cardInst.GetRenderer().sprite = _currentItem.GetItemSprite();
+
+            _cardInst.SetCamera(_camera);
+
+            _cardInst.GetRenderer().gameObject.transform.localScale = ((new Vector3(0.05f, 0.05f, 1.0f)) * _currentItem.GetItemSpriteIconScale());
+
+            _cardInst.SetManager(this);
+
+            _cards.Add(_cardInst);
+
+            _cardInstGO.transform.parent = _cardSpaceTr;
+
+            _cardInstGO.transform.localPosition = _assignedP;
+
+            _cardInstGO.SetActive(!_flipS);
+        }
+
+        for(int _i = (_cards.Count - 1); _i >= 0; _i--)
+        {
+            _cardInstGO = _cards[_i].gameObject;
+
+            _cardInstGO.name = "Card No. " + (_i + 1);
+
+            _cardInstGO.transform.SetSiblingIndex(0);
+        }
+
+        _gameSession.SetCards(_cards);
+
+        _turnsV = DataPersistenceManagerScript.GetInstance().GetGameData()._turns;
+
+        _matchesV = DataPersistenceManagerScript.GetInstance().GetGameData()._matches;
+
+        _progP = DataPersistenceManagerScript.GetInstance().GetGameData()._progressPercentage;
+
+        _compP = DataPersistenceManagerScript.GetInstance().GetGameData()._completionPercentage;
+
+        _gameSession.SetTurns(_turnsV);
+
+        _gameSession.SetMatches(_matchesV);
+
+        _gameSession.SetProgressPercentage(_progP);
+
+        _gameSession.SetCompletionPercentage(_compP);
+
+        _playingCanvas.GetTurnsCountText().text = _turnsV.ToString();
+
+        _playingCanvas.GetMatchCountText().text = _matchesV.ToString();
+
+        _playingCanvas.GetProgressText().text = _progP.ToString("0.00") + "%";
+
+        _playingCanvas.GetCompletionText().text = _compP.ToString("0.00") + "%";
     }
 }
