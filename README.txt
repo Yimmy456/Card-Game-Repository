@@ -1,4 +1,5 @@
-This is a sample upload.
+*IMPORTANT: When you start the game in the editor, you need to start from the "Prestart Scene" scene file.
+
 
 
 

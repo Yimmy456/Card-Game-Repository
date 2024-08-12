@@ -144,10 +144,10 @@ public class DataPersistenceManagerScript : MonoBehaviour
     {
         string _path = Application.persistentDataPath;
 
-        //if (Application.platform == RuntimePlatform.Android)
-        //{
-        //    _path = "/Android/data/com.Manar_Ajhars_Games.Asthma_App/files/";
-        //}
+        if (Application.platform == RuntimePlatform.Android)
+        {
+            _path = "/Android/data/com.DefaultCompany.Card_Game/files/";
+        }
 
         return _path;
     }
